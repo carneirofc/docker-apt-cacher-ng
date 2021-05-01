@@ -1,19 +1,27 @@
 #!/bin/sh
-set -ex
+set -exu
 docker pull debian:buster-slim
 
 branch=$(git branch --no-color --show-current)
 build_date=$(date -I)
+build_date_RFC339=$(date --rfc-3339=seconds)
 commit=$(git rev-parse --short HEAD)
 repository=$(git remote show origin |grep Fetch|awk '{ print $3 }')
-tag=carneirofc/apt-cacher-ng:${build_date}
+
+tag=carneirofc/apt-cacher-ng:${branch}-${build_date}
 
 docker build \
-    --label repository.commit=${commit} \
-    --label repository.branch=${branch} \
-    --label repository=${repository} \
-    --label maintainer.name="Claudio F. Carneiro" \
-    --label maintainer.email="claudiofcarneiro@hotmail.com" \
+    --label "org.opencontainers.image.authors=Claudio F. Carneiro <claudiofcarneiro@hotmail.com>" \
+    --label "org.opencontainers.image.created=${build_date_RFC339}" \
+    --label "org.opencontainers.image.description=Debian buster with apt-cacher-ng" \
+    --label "org.opencontainers.image.licenses=Apache-2.0" \
+    --label "org.opencontainers.image.revision=" \
+    --label "org.opencontainers.image.revision=${commit}" \
+    --label "org.opencontainers.image.source=${repository}" \
+    --label "org.opencontainers.image.title=apt-cacher-ng" \
+    --label "org.opencontainers.image.url=${repository}" \
+    --label "org.opencontainers.image.vendor=carneirofc" \
+    --label "org.opencontainers.image.version=${tag}" \
     --tag ${tag} \
     .
 
