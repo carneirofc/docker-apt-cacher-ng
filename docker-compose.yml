@@ -1,0 +1,7 @@
+version: "3.8"
+services:
+  eg_apt_cacher_ng:
+    image: carneirofc/apt-cacher-ng:2021-04-30
+    ports:
+      - 3142:3142
+
