@@ -1,5 +1,5 @@
-# apt-chacher-ng-docker
-Docker image for apt-chacher-ng.
+# apt-cacher-ng-docker
+Docker image for apt-cacher-ng.
 
 apt-cacher-ng is a nice little software to create a local cache of the Debian mirrors (but it can also operate on other distribution mirrors). 
 
