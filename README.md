@@ -14,5 +14,5 @@ Create a file with:
 ```
 # file: /etc/apt/apt.conf.d/proxy
 Acquire::http { Proxy "http://<server_ip>:3142"; }
-
+Acquire::https { Proxy "DIRECT"; }
 ```

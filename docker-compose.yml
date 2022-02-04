@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   eg_apt_cacher_ng:
-    image: carneirofc/apt-cacher-ng:978a8e0-2022-02-04
+    image: carneirofc/apt-cacher-ng:84e1dc9-2022-02-04
     ports:
       - 3142:3142
     volumes:
