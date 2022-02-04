@@ -1,14 +1,12 @@
 #!/bin/sh
 set -exu
-docker pull debian:buster-slim
-
 branch=$(git branch --no-color --show-current)
 build_date=$(date -I)
 build_date_RFC339=$(date --rfc-3339=seconds)
 commit=$(git rev-parse --short HEAD)
 repository=$(git remote show origin |grep Fetch|awk '{ print $3 }')
 
-tag=carneirofc/apt-cacher-ng:${branch}-${build_date}
+tag=carneirofc/apt-cacher-ng:${commit}-${build_date}
 
 docker build \
     --label "org.opencontainers.image.authors=Claudio F. Carneiro <claudiofcarneiro@hotmail.com>" \

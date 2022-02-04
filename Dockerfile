@@ -1,8 +1,30 @@
-FROM   debian:buster-slim
+FROM debian:11.2-slim
 
-VOLUME ["/var/cache/apt-cacher-ng"]
-RUN    apt-get update && apt-get install -y apt-cacher-ng tzdata
+RUN apt-get update \
+ && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
+      apt-cacher-ng ca-certificates tzdata wget \
+ && rm -rf /var/lib/apt/lists/*
 
-EXPOSE 3142
-COPY   acng.conf /etc/apt-cacher-ng/acng.confc/etc/apt-ccher-ng/acng.conf
-CMD    chmod 777 /var/cache/apt-cacher-ng && /etc/init.d/apt-cacher-ng start && tail -f /var/log/apt-cacher-ng/*
+
+ENV APT_CACHER_NG_USER=apt-cacher-ng \
+    APT_CACHER_NG_CACHE_DIR=/var/cache/apt-cacher-ng \
+    APT_CACHER_NG_LOG_DIR=/var/log/apt-cacher-ng \
+    APT_CACHER_NG_USER=apt-cacher-ng \
+    APT_CACHER_NG_CONFIG=/opt/apt-cacher-ng
+
+HEALTHCHECK --interval=10s --timeout=2s --retries=3 \
+    CMD wget -q -t1 -O /dev/null  http://localhost:3142/acng-report.html || exit 1
+
+COPY entrypoint.sh /sbin/entrypoint.sh
+
+COPY acng.conf ${APT_CACHER_NG_CONFIG}/acng.conf
+
+RUN chmod 755 /sbin/entrypoint.sh && \
+    mkdir -p -v ${APT_CACHER_NG_CONFIG} && \
+    chown -v ${APT_CACHER_NG_USER}:${APT_CACHER_NG_USER} ${APT_CACHER_NG_CONFIG}/acng.conf
+
+EXPOSE 3142/tcp
+
+VOLUME ["${APT_CACHER_NG_CACHE_DIR}", "${APT_CACHER_NG_LOG_DIR}"]
+
+ENTRYPOINT ["/sbin/entrypoint.sh"]
